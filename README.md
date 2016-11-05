@@ -4,9 +4,11 @@ bittrex3
 Python 3 bindings for bittrex based on Eric Somdahl code.  We are not associated -- use at your own risk, etc.
 
 Tips are appreciated:
+
 Eric Somdahl:
 * BTC: 1D7F9ZF6BCoCh2MncK15jxHM1T5BPX9Ajd
 * LTC: LaasG9TRa9p32noN2oKUVVqrDFp4Ja1NK3
+
 Marcin Repec:
 * BTC: 1ABHzsSZRN19wJQfXQfpWMXcKdv2nDTRa5
 * LTC: LcH3d8fu5w9YyekqU2EuEUfFn3AVjSWnYd
