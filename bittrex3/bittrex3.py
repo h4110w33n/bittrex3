@@ -14,6 +14,7 @@ BUY_ORDERBOOK = 'buy'
 SELL_ORDERBOOK = 'sell'
 BOTH_ORDERBOOK = 'both'
 
+# API v1.1
 PUBLIC_SET = ['getmarkets', 'getcurrencies', 'getticker', 'getmarketsummaries', 'getorderbook',
               'getmarkethistory']
 
@@ -22,10 +23,14 @@ MARKET_SET = ['getopenorders', 'cancel', 'sellmarket', 'selllimit', 'buymarket',
 ACCOUNT_SET = ['getbalances', 'getbalance', 'getdepositaddress', 'withdraw', 'getorder', 'getorderhistory',
                'getwithdrawalhistory', 'getdeposithistory']
 
+# API v2.0
+MARKET_SET_2 = ['GetTicks']
 
 class Bittrex3(object):
     """
     Used for requesting Bittrex with API key and API secret
+
+    (Limited Bittrex API v2.0 support)
     """
 
     def __init__(self, api_key, api_secret):
@@ -34,6 +39,7 @@ class Bittrex3(object):
         self.public_set = set(PUBLIC_SET)
         self.market_set = set(MARKET_SET)
         self.account_set = set(ACCOUNT_SET)
+        self.market_set_2 = set(MARKET_SET_2)
 
     def api_query(self, method, options=None):
         """
@@ -51,7 +57,10 @@ class Bittrex3(object):
         if not options:
             options = {}
         nonce = str(int(time.time() * 1000))
-        base_url = 'https://bittrex.com/api/v1.1/%s/'
+        if method in self.market_set_2:
+            base_url = 'https://bittrex.com/Api/v2.0/pub/%s/'
+        else:
+            base_url = 'https://bittrex.com/api/v1.1/%s/'
         request_url = ''
 
         if method in self.public_set:
@@ -60,6 +69,8 @@ class Bittrex3(object):
             request_url = (base_url % 'market') + method + '?apikey=' + self.api_key + "&nonce=" + nonce + '&'
         elif method in self.account_set:
             request_url = (base_url % 'account') + method + '?apikey=' + self.api_key + "&nonce=" + nonce + '&'
+        elif method in self.market_set_2:
+            request_url = (base_url % 'market') + method + '?'
 
         request_url += urllib.parse.urlencode(options)
 
@@ -382,3 +393,24 @@ class Bittrex3(object):
         :rtype : dict
         """
         return self.api_query('getdeposithistory', {"currency": currency})
+
+    def get_ticks(self, market, tick_interval="tenMinutes", timestamp=""):
+        """
+        Used to retrieve market ticker 'ticks' data (APIv2.0)
+
+        /pub/market/GetTicks
+
+        :param market: Bittrex market identifier (i.e BTC-DOGE)
+        :type market: str
+
+        :param tick_interval: ticker sample interval in camel case (defaults to 10 minutes)
+        :type market: str
+        :valid values: “oneMin”, “fiveMin”, “thirtyMin”, “hour”, “day”
+
+        :param timestamp: (optional) timestamp value that is currently not used by the API.
+        :type market: int
+
+        :return:
+        :rtype : dict :
+        """
+        return self.api_query('GetTicks', {"marketName": market, "tickInterval": tick_interval, "_": timestamp})
