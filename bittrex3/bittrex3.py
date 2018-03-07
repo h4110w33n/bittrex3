@@ -24,7 +24,7 @@ ACCOUNT_SET = ['getbalances', 'getbalance', 'getdepositaddress', 'withdraw', 'ge
                'getwithdrawalhistory', 'getdeposithistory']
 
 # API v2.0
-MARKET_SET_2 = ['GetTicks']
+MARKET_SET_2 = ['GetTicks', 'GetLatestTick']
 
 class Bittrex3(object):
     """
@@ -414,3 +414,29 @@ class Bittrex3(object):
         :rtype : dict :
         """
         return self.api_query('GetTicks', {"marketName": market, "tickInterval": tick_interval, "_": timestamp})
+
+    def get_latest_candle(self, market, tick_interval, timestamp=""):
+        """
+        Used to get the latest candle for the market.
+        Endpoint:
+        1.1 NO EQUIVALENT
+        2.0 /pub/market/GetLatestTick
+        Example ::
+            { success: true,
+              message: '',
+              result:
+              [ {   O : 0.00350397,
+                    H : 0.00351000,
+                    L : 0.00350000,
+                    C : 0.00350350,
+                    V : 1326.42643480,
+                    T : 2017-11-03T03:18:00,
+                    BV: 4.64416189 } ]
+            }
+        :return: Available latest tick candle in JSON
+        :rtype: dict
+
+        *** This is was pulled from: https://github.com/ericsomdahl/python-bittrex/blob/master/bittrex/bittrex.py#L818
+        It was the original project this is based on. ***
+        """
+        return self.api_query('GetLatestTick', {"marketName": market, "tickInterval": tick_interval, "_": timestamp})
